@@ -6,9 +6,11 @@
   "logo": "aws-ug-scz-sinfondo.png",
   "meetup": "https://www.meetup.com/user-group-santa-cruz/",
   "redes": {
-    "instagram": "",
-    "tiktok": "",
-    "x": "",
-    "linkedin": ""
+    "instagram": "https://www.instagram.com/awsugscz/",
+    "tiktok": "https://www.tiktok.com/@aws.ug.santa.cruz",
+    "youtube": "https://www.youtube.com/@ugpscz",
+    "linkedin": "https://www.linkedin.com/groups/10003233/",
+    "whatsapp": "https://chat.whatsapp.com/HShbNOwoWrBLknDhmdIMKJ",
+    "x": ""
   }
 }

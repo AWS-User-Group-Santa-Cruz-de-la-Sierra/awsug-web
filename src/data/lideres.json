@@ -2,12 +2,12 @@
   {
     "id": "afu-tse",
     "nombre": "Afu Tse",
-    "titulo": "Líder · AWS User Group Santa Cruz",
+    "titulo": "Senior DevOps & Cloud Engineer",
     "foto": "afu-tse.jpeg",
     "encuadre": {
-      "x": 45,
-      "y": 24,
-      "zoom": 1.9
+      "x": 47,
+      "y": 32,
+      "zoom": 1.5
     },
     "orden": 1,
     "links": {
@@ -20,12 +20,12 @@
   {
     "id": "rodolfo-justiniano",
     "nombre": "Rodolfo Justiniano",
-    "titulo": "Líder · AWS User Group Santa Cruz",
+    "titulo": "Principal DevOps Engineer",
     "foto": "rodolfo-justiniano.png",
     "encuadre": {
       "x": 46,
-      "y": 24,
-      "zoom": 2.1
+      "y": 30,
+      "zoom": 1.4
     },
     "orden": 2,
     "links": {
@@ -38,19 +38,19 @@
   {
     "id": "isaac-jaldin",
     "nombre": "Isaac Jaldin",
-    "titulo": "Líder · AWS User Group Santa Cruz",
-    "foto": "isaac-jaldin.png",
+    "titulo": "Senior Software Engineer",
+    "foto": "isaac-jaldin-upb.jpeg",
     "encuadre": {
-      "x": 37,
-      "y": 40,
-      "zoom": 2.8
+      "x": 40,
+      "y": 0,
+      "zoom": 1.3
     },
     "orden": 3,
     "links": {
-      "linkedin": "",
-      "instagram": "",
+      "linkedin": "https://www.linkedin.com/in/isaac-jaldin-benavides-269b091b0/",
+      "instagram": "https://www.instagram.com/isaac.log__/",
       "skillbuilder": "",
-      "tiktok": ""
+      "tiktok": "https://www.tiktok.com/@isaac.log__"
     }
   }
 ]

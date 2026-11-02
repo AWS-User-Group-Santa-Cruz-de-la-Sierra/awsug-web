@@ -74,6 +74,7 @@ const lista = [
   .lider {
     display: grid;
     justify-items: center;
+    align-content: start;
     text-align: center;
     gap: 0.4rem;
   }
@@ -88,14 +89,15 @@ const lista = [
     border-width: 0.5rem;
   }
 
-  /* la cara queda al centro del círculo: se encuadra con x, y y zoom de lideres.json */
+  /* encuadre de lideres.json: x, y es el punto de la foto que queda fijo y zoom acerca alrededor de él.
+     Con zoom 1 se ve la foto completa recortada al círculo; nunca quedan bordes vacíos. */
   .lider :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: var(--fx, 50%) var(--fy, 50%);
     transform-origin: var(--fx, 50%) var(--fy, 50%);
-    transform: translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))) scale(var(--zoom, 1));
+    transform: scale(var(--zoom, 1));
   }
 
   .lider-ini {

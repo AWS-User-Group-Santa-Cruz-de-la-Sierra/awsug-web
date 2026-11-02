@@ -8,9 +8,8 @@ interface Props {
 
 const { variante = 'fila' } = Astro.props;
 const dev = import.meta.env.DEV;
-// En la fila solo se muestran las redes con URL (en desarrollo se ven las que faltan, tachadas).
-// Los stickers del cierre siempre están: si falta el link dicen "pronto".
-const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || dev);
+// Solo se muestran las redes con URL en src/data/sitio.json (en desarrollo se ven las que faltan, tachadas).
+const visibles = redes.filter((r) => r.url || dev);
 ---
 
 {
@@ -27,12 +26,6 @@ const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || 
               <Icon name={r.icono} />
               <span>{r.nombre}</span>
             </a>
-          ) : variante === 'stickers' ? (
-            <span class="red red--pronto">
-              <Icon name={r.icono} />
-              <span class="red-nom">{r.nombre}</span>
-              <small>pronto</small>
-            </span>
           ) : (
             <span class="red red--pendiente" title="Falta el link en src/data/sitio.json">
               <Icon name={r.icono} />
@@ -83,16 +76,6 @@ const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || 
     gap: 1rem;
   }
 
-  .red--pronto small {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-
-  .redes--stickers .red--pronto {
-    border-style: dashed;
-  }
-
   .redes--stickers .red {
     flex-direction: column;
     justify-content: center;
@@ -122,9 +105,11 @@ const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || 
   }
 
   @media (max-width: 480px) {
+    /* en el celular, filas de tres */
     .redes--stickers {
-      gap: 0.5rem;
-      flex-wrap: nowrap;
+      display: grid;
+      grid-template-columns: repeat(3, 5rem);
+      gap: 0.75rem;
     }
 
     .redes--stickers .red {
@@ -147,8 +132,5 @@ const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || 
       clip: rect(0, 0, 0, 0);
     }
 
-    .red--pronto small {
-      font-size: 0.75rem;
-    }
   }
 </style>

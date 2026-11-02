@@ -74,7 +74,7 @@ const lideres = defineCollection({
     /** Nombre del archivo dentro de assets/members/ (opcional). */
     foto: z.string().optional(),
     orden: z.number().default(0),
-    /** Cómo encuadrar la foto en el círculo: centro de la cara en % y zoom. */
+    /** Encuadre de la foto en el círculo: punto fijo x, y en % de la foto y zoom (1 = foto completa). */
     encuadre: z
       .object({ x: z.number().min(0).max(100), y: z.number().min(0).max(100), zoom: z.number().min(1).max(4) })
       .default({ x: 50, y: 50, zoom: 1 }),

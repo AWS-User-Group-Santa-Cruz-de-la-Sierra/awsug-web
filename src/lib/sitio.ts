@@ -15,8 +15,11 @@ const esquema = z.object({
   redes: z.object({
     instagram: urlOpcional,
     tiktok: urlOpcional,
-    x: urlOpcional,
+    youtube: urlOpcional,
     linkedin: urlOpcional,
+    /** Link de invitación al grupo de WhatsApp. */
+    whatsapp: urlOpcional,
+    x: urlOpcional,
   }),
 });
 
@@ -26,6 +29,8 @@ export const sitio = esquema.parse(datos);
 export const redes = [
   { clave: 'instagram', nombre: 'Instagram', icono: 'instagram-line', url: sitio.redes.instagram },
   { clave: 'tiktok', nombre: 'TikTok', icono: 'tiktok-fill', url: sitio.redes.tiktok },
-  { clave: 'x', nombre: 'X', icono: 'twitter-x-line', url: sitio.redes.x },
+  { clave: 'youtube', nombre: 'YouTube', icono: 'youtube-fill', url: sitio.redes.youtube },
   { clave: 'linkedin', nombre: 'LinkedIn', icono: 'linkedin-box-fill', url: sitio.redes.linkedin },
+  { clave: 'whatsapp', nombre: 'WhatsApp', icono: 'whatsapp-line', url: sitio.redes.whatsapp },
+  { clave: 'x', nombre: 'X', icono: 'twitter-x-line', url: sitio.redes.x },
 ] as const;
