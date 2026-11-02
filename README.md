@@ -26,10 +26,18 @@ En `npm run dev` se muestran tachados los links de redes que todavía no se carg
 |---|---|
 | Eventos (un archivo por evento) | `src/content/eventos/*.md` |
 | Fotos de eventos y speakers | `assets/events/` |
-| Líderes | `src/data/lideres.json` + fotos en `assets/members/` (el campo `encuadre` centra la cara en el círculo: `x`, `y` en % y `zoom`) |
+| Líderes | `src/data/lideres.json` + fotos en `assets/members/` (el campo `encuadre` ajusta la foto en el círculo: `x`, `y` es el punto que queda fijo, en %, y `zoom` acerca; 1 = foto completa) |
 | Merch | `src/data/merch.json` + fotos en `assets/merch/` |
 | Redes del grupo, link de Meetup, logo | `src/data/sitio.json` + logo en `assets/logos/` |
 | Imagen para compartir por defecto | `public/og.png` |
+
+## Mantenimiento con Claude
+
+En `.claude/skills/` hay skills listas para las tareas de siempre. Con Claude Code abierto en esta carpeta basta con pasarle los datos:
+
+- **Agregar un evento**: pega el JSON de Meetup del evento y pide "agrega este evento" (skill `agregar-evento`).
+- **Después de un evento**: pide "ya pasó la Game Night, ciérrala" y pasa las fotos si las tienes (skill `cerrar-evento`).
+- **Publicar**: pide "publica el sitio" (skill `publicar-sitio`).
 
 ## Agregar un evento
 

@@ -2,6 +2,14 @@
 
 Sitio estático en Astro 7 que se publica en S3. El contenido vive en archivos de datos; casi nunca hace falta tocar componentes para actualizarlo.
 
+## Skills del repo
+
+Las tareas de mantenimiento están escritas como skills en `.claude/skills/`. Úsalas en vez de improvisar:
+
+- `agregar-evento`: el maintainer pasa el JSON de Meetup (pegado o como archivo) o los datos de un evento nuevo.
+- `cerrar-evento`: un evento ya ocurrió; pasa de próximo a pasado, con su link, fotos, grabación o slides.
+- `publicar-sitio`: build y subida a S3, solo si lo piden.
+
 ## Tareas frecuentes
 
 **Agregar un evento**
