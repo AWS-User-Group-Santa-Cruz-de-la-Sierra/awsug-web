@@ -1,0 +1,180 @@
+---
+import Icon from './Icon.astro';
+import { fechaCorta, horario, linkPrincipal, nombreModalidad, nombreTipo, type Evento } from '../lib/eventos';
+import { sitio } from '../lib/sitio';
+
+interface Props {
+  evento?: Evento;
+  r?: number;
+}
+
+const { evento, r = -3 } = Astro.props;
+const link = evento && linkPrincipal(evento);
+---
+
+<div class="sticker ev" data-sticker style={`--r:${r}deg`}>
+  {
+    evento && (
+      <span class="ev-prox" aria-hidden="true">
+        ¡Próximo!
+      </span>
+    )
+  }
+  <article class="vinyl vinyl--blanco peel ev-in">
+    {
+      evento ? (
+        <>
+          <h2 class="ev-tit">
+            <span class="sr-only">Próximo evento: </span>
+            <a href={evento.url}>{evento.data.titulo}</a>
+          </h2>
+          <p class="ev-top mono meta-ev">
+            <span>{evento.serie}</span>
+            <span>{nombreTipo[evento.data.tipo]}</span>
+            {evento.data.modalidad !== 'presencial' && <span>{nombreModalidad[evento.data.modalidad]}</span>}
+            {evento.data.ejemplo && <span class="ejemplo">Ejemplo</span>}
+          </p>
+          <ul class="ev-meta">
+            <li>
+              <Icon name="calendar-event-line" />
+              <span class="tabular">
+                {fechaCorta(evento.inicio)} · {horario(evento)}
+              </span>
+            </li>
+            <li>
+              <Icon name="map-pin-2-line" />
+              <span>{evento.data.lugar.nombre}</span>
+            </li>
+          </ul>
+          <div class="ev-acc">
+            {link && (
+              <a href={link.url} class="btn btn--activo" target="_blank" rel="noopener">
+                Inscribirme
+                <Icon name="arrow-right-up-line" />
+              </a>
+            )}
+            <a href={evento.url} class="ev-det">
+              Ver detalles
+            </a>
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 class="ev-tit">Estamos armando la próxima fecha.</h2>
+          <p class="ev-vacio">Únete al grupo en Meetup y te avisamos apenas se abra la inscripción.</p>
+          <div class="ev-acc">
+            {sitio.meetup && (
+              <a href={sitio.meetup} class="btn btn--activo" target="_blank" rel="noopener">
+                Unirme en Meetup
+                <Icon name="arrow-right-up-line" />
+              </a>
+            )}
+            <a href="/events/" class="ev-det">
+              Ver eventos pasados
+            </a>
+          </div>
+        </>
+      )
+    }
+  </article>
+</div>
+
+<style>
+  .ev {
+    width: min(100%, 25.5rem);
+  }
+
+  .ev-in {
+    padding: 1.7rem 1.4rem 1.4rem;
+    border-radius: 1.5rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .ev-top {
+    color: #3a4566;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: -0.25rem;
+  }
+
+  /* un sticker sobre el sticker: marca el evento activo */
+  .ev-prox {
+    position: absolute;
+    z-index: 2;
+    top: -1.1rem;
+    left: 1rem;
+    padding: 0.3rem 0.85rem 0.35rem;
+    border-radius: 999px;
+    border: 0.22rem solid var(--ink);
+    background: var(--violet);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 850;
+    font-stretch: 112%;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    rotate: -6deg;
+    filter: var(--shadow-stuck);
+  }
+
+  .ev-tit {
+    font-size: clamp(1.45rem, 1.1rem + 1vw, 1.9rem);
+    font-stretch: 108%;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
+  .ev-tit a {
+    text-decoration: none;
+  }
+
+  .ev-tit a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  .ev-meta {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #2a3557;
+  }
+
+  .ev-meta li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .ev-meta :global(.icon) {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+    color: var(--green-ink);
+  }
+
+  .ev-acc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1.1rem;
+    margin-top: 0.3rem;
+  }
+
+  .ev-det {
+    font-weight: 700;
+    color: var(--lid);
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .ev-vacio {
+    color: #2a3557;
+  }
+</style>

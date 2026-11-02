@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import Redes from './Redes.astro';
+import { sitio } from '../lib/sitio';
+
+const anio = new Date().getFullYear();
+---
+
+<footer class="pie">
+  <div class="wrap">
+    <div class="cierre">
+      <h2>Nos vemos en el próximo evento.</h2>
+      <div class="cierre-acciones">
+        <a href="/events/" class="btn btn--verde">
+          Ver la agenda
+          <Icon name="arrow-right-line" />
+        </a>
+        {
+          sitio.meetup && (
+            <a href={sitio.meetup} class="btn btn--verde" target="_blank" rel="noopener">
+              Seguir en Meetup
+              <Icon name="arrow-right-up-line" />
+            </a>
+          )
+        }
+      </div>
+      <Redes variante="stickers" />
+    </div>
+
+    <div class="base">
+      <a href="/" class="base-marca">
+        <Logo tam={2.2} />
+        <span>{sitio.nombre}</span>
+      </a>
+      <p class="legal">
+        Comunidad independiente de {sitio.ciudad}. AWS y el logo de AWS son marcas de Amazon.com, Inc. o sus
+        afiliadas. © {anio}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    padding-top: clamp(4rem, 3rem + 5vw, 8rem);
+    padding-bottom: 2.5rem;
+    background: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.25));
+  }
+
+  .cierre {
+    display: grid;
+    gap: 2rem;
+    justify-items: start;
+    padding-bottom: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .cierre h2 {
+    font-size: clamp(2.4rem, 1.2rem + 5vw, 5.5rem);
+    font-stretch: 120%;
+    max-width: 14ch;
+  }
+
+  .cierre-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--lid-line);
+  }
+
+  .base-marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .legal {
+    font-size: 0.875rem;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+</style>

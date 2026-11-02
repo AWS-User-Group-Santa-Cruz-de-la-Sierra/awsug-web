@@ -1,0 +1,25 @@
+---
+import iconos from '@iconify-json/ri/icons.json';
+
+interface Props {
+  /** Nombre del ícono de Remix Icon, por ejemplo "instagram-line". */
+  name: string;
+  /** Si se pasa, el ícono se anuncia a lectores de pantalla con este texto. */
+  label?: string;
+  class?: string;
+}
+
+const { name, label, class: clase } = Astro.props;
+const icono = (iconos.icons as Record<string, { body: string }>)[name];
+if (!icono) throw new Error(`Ícono no encontrado en Remix Icon: ${name}`);
+---
+
+<svg
+  class:list={['icon', clase]}
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  set:html={icono.body}
+/>

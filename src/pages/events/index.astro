@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventoFicha from '../../components/EventoFicha.astro';
+import Hitos from '../../components/Hitos.astro';
+import Redes from '../../components/Redes.astro';
+import { obtenerEventos } from '../../lib/eventos';
+import { sitio } from '../../lib/sitio';
+
+const { proximos, pasados } = await obtenerEventos();
+---
+
+<Base
+  titulo="Eventos"
+  descripcion="Próximos y pasados meetups, workshops y eventos del AWS User Group Santa Cruz de la Sierra."
+>
+  <section class="section cab">
+    <div class="wrap">
+      <h1>Eventos</h1>
+      <p class="lead">
+        Meetups, workshops hands-on y eventos grandes de la comunidad AWS de Santa Cruz de la Sierra. Inscríbete
+        en el próximo y nos vemos ahí.
+      </p>
+    </div>
+  </section>
+
+  <section id="proximos" class="section proximos" aria-labelledby="t-proximos">
+    <div class="wrap">
+      <h2 id="t-proximos" class="sec-tit">Próximos</h2>
+      {
+        proximos.length > 0 ? (
+          <div class="lista">
+            {proximos.map((e, i) => (
+              <EventoFicha evento={e} prioridad={i === 0} r={i % 2 ? 2 : -2} />
+            ))}
+          </div>
+        ) : (
+          <div class="vacio">
+            <p class="lead">
+              Todavía no hay fecha para el próximo evento. Únete al grupo en Meetup y te avisamos apenas se abra la
+              inscripción.
+            </p>
+            {sitio.meetup && (
+              <a href={sitio.meetup} class="btn btn--activo" target="_blank" rel="noopener">
+                Unirme en Meetup
+              </a>
+            )}
+            <Redes />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="pasados" class="section" aria-labelledby="t-pasados">
+    <div class="wrap">
+      <h2 id="t-pasados" class="sec-tit">Pasados</h2>
+      <Hitos eventos={pasados} huecoHref="#proximos" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cab {
+    padding-bottom: 0;
+  }
+
+  .cab h1 {
+    font-size: clamp(3rem, 1rem + 8vw, 6rem);
+    font-stretch: 125%;
+    margin-bottom: 1.5rem;
+  }
+
+  .sec-tit {
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+
+  .lista {
+    display: grid;
+    gap: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+
+  .vacio {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+</style>

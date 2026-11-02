@@ -1,0 +1,449 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Portada from '../../components/Portada.astro';
+import { obtenerEventos, fechaLarga, horario, linkPrincipal, nombreModalidad, nombreTipo, type Evento } from '../../lib/eventos';
+import { imagen } from '../../lib/imagenes';
+import { sitio } from '../../lib/sitio';
+
+export async function getStaticPaths() {
+  const { todos } = await obtenerEventos();
+  return todos.map((evento) => ({ params: { slug: evento.id }, props: { evento } }));
+}
+
+interface Props {
+  evento: Evento;
+}
+
+const { evento } = Astro.props;
+const { Content } = await render(evento);
+const { titulo, resumen, lugar, speakers, links, galeria } = evento.data;
+const pasado = evento.fin.getTime() < Date.now();
+const principal = linkPrincipal(evento);
+const otros = links.filter((l) => l !== principal);
+const fotos = galeria.map((n) => imagen('events', n)!);
+
+// imagen para compartir: la portada recortada a 1200×630
+const portada = imagen('events', evento.data.portada);
+const og = portada ? (await getImage({ src: portada, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: titulo,
+  description: resumen,
+  startDate: evento.inicio.toISOString(),
+  endDate: evento.fin.toISOString(),
+  eventAttendanceMode: {
+    presencial: 'https://schema.org/OfflineEventAttendanceMode',
+    'en-linea': 'https://schema.org/OnlineEventAttendanceMode',
+    hibrido: 'https://schema.org/MixedEventAttendanceMode',
+  }[evento.data.modalidad],
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: lugar.nombre, address: lugar.direccion ?? sitio.ciudad },
+  organizer: { '@type': 'Organization', name: sitio.nombre, url: Astro.site?.toString() },
+  performer: speakers.map((s) => ({ '@type': 'Person', name: s.nombre })),
+  ...(og ? { image: [new URL(og, Astro.site).toString()] } : {}),
+};
+---
+
+<Base titulo={titulo} descripcion={resumen} imagen={og} tipoOg="article">
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <article class="section det">
+    <div class="wrap">
+      <a href="/events/" class="volver">
+        <Icon name="arrow-left-line" />
+        Todos los eventos
+      </a>
+
+      <header class="det-cab">
+        <h1>{titulo}</h1>
+        <p class="det-top mono meta-ev">
+          <span>{evento.serie}</span>
+          <span class="det-tipo">{nombreTipo[evento.data.tipo]}</span>
+          <span>{nombreModalidad[evento.data.modalidad]}</span>
+          {pasado && <span class="det-estado">Ya pasó</span>}
+          {evento.data.ejemplo && <span class="ejemplo">Ejemplo</span>}
+        </p>
+        <p class="lead">{resumen}</p>
+      </header>
+
+      <div class="det-grid">
+        <div class="sticker det-foto" data-sticker style="--r:-2deg">
+          <div class="vinyl vinyl--blanco peel det-marco">
+            <Portada evento={evento} prioridad sizes="(max-width: 900px) 100vw, 58vw" />
+          </div>
+        </div>
+
+        <aside class="det-panel" aria-label="Datos del evento">
+          <dl>
+            <div>
+              <dt>Fecha</dt>
+              <dd class="tabular cap">{fechaLarga(evento.inicio)}</dd>
+            </div>
+            <div>
+              <dt>Hora</dt>
+              <dd class="tabular">{horario(evento)} (hora de Bolivia)</dd>
+            </div>
+            <div>
+              <dt>Lugar</dt>
+              <dd>
+                {lugar.nombre}
+                {lugar.direccion && <span class="sub">{lugar.direccion}</span>}
+                {
+                  lugar.mapa && (
+                    <a href={lugar.mapa} class="link-flecha mapa" target="_blank" rel="noopener">
+                      Abrir en el mapa
+                      <Icon name="arrow-right-up-line" />
+                    </a>
+                  )
+                }
+              </dd>
+            </div>
+          </dl>
+
+          {
+            links.length > 0 && (
+              <div class="det-acc">
+                {principal && (
+                  <a
+                    href={principal.url}
+                    class:list={['btn', pasado ? 'btn--plata' : 'btn--activo']}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {principal.etiqueta}
+                    <Icon name="arrow-right-up-line" />
+                  </a>
+                )}
+                {otros.map((l) => (
+                  <a href={l.url} class="btn btn--verde" target="_blank" rel="noopener">
+                    {l.etiqueta}
+                    <Icon name="arrow-right-up-line" />
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </aside>
+      </div>
+
+      <div class="det-cuerpo">
+        <div class="prosa">
+          <h2>Sobre el evento</h2>
+          <div class="descripcion">
+            <Content />
+          </div>
+        </div>
+
+        {
+          speakers.length > 0 && (
+            <section class="speakers" aria-labelledby="t-speakers">
+              <h2 id="t-speakers">Speakers</h2>
+              <ul>
+                {speakers.map((s, i) => {
+                  const foto = imagen('events', s.foto);
+                  return (
+                    <li>
+                      <span class="sticker sp-foto" style={`--r:${i % 2 ? 4 : -4}deg`}>
+                        <span class="vinyl vinyl--verde forma--circulo">
+                          {foto ? (
+                            <Image src={foto} alt="" width={160} />
+                          ) : (
+                            <Icon name="user-voice-line" />
+                          )}
+                        </span>
+                      </span>
+                      <div>
+                        <p class="sp-nom">
+                          {s.linkedin ? (
+                            <a href={s.linkedin} target="_blank" rel="noopener">
+                              {s.nombre}
+                            </a>
+                          ) : (
+                            s.nombre
+                          )}
+                        </p>
+                        {s.rol && <p class="sp-rol">{s.rol}</p>}
+                        {s.charla && <p class="sp-charla">{s.charla}</p>}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+
+      {
+        fotos.length > 0 && (
+          <section class="galeria" aria-labelledby="t-galeria">
+            <h2 id="t-galeria">Fotos</h2>
+            <ul data-sticker-group>
+              {fotos.map((f, i) => (
+                <li class="sticker" data-sticker style={`--r:${[-3, 2, -1, 3][i % 4]}deg`}>
+                  <div class="vinyl vinyl--blanco gal-marco">
+                    <Image src={f} alt={`Foto ${i + 1} de ${titulo}`} widths={[480, 900]} sizes="(max-width: 700px) 100vw, 33vw" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+  </article>
+</Base>
+
+<style>
+  .det {
+    padding-top: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+
+  .volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    color: var(--silver);
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 2rem;
+  }
+
+  .volver:hover {
+    color: var(--ink);
+  }
+
+  .volver :global(.icon) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .det-cab {
+    display: grid;
+    gap: 1.2rem;
+    max-width: 62rem;
+    margin-bottom: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  }
+
+  .det-cab h1 {
+    font-size: clamp(2.4rem, 1.2rem + 4.5vw, 5.25rem);
+    font-stretch: 115%;
+  }
+
+  .det-top {
+    color: var(--muted);
+  }
+
+  .det-tipo {
+    color: var(--green-hi);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .det-estado {
+    color: var(--silver);
+    border: 1px solid var(--lid-line);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  .det-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .det-marco {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-width: 0.5rem;
+    border-radius: 1.8rem;
+  }
+
+  .det-panel {
+    display: grid;
+    gap: 2rem;
+    padding: 1.75rem;
+    border-radius: 1.5rem;
+    background: var(--lid-raised);
+    border: 1px solid var(--lid-line);
+  }
+
+  .det-panel dl {
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .det-panel dt {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .det-panel dd {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .cap::first-letter {
+    text-transform: uppercase;
+  }
+
+  .sub {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--silver);
+  }
+
+  .mapa {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .det-acc {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .det-acc .btn {
+    justify-content: center;
+  }
+
+  .det-cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  .prosa {
+    max-width: 68ch;
+  }
+
+  .prosa h2,
+  .speakers h2,
+  .galeria h2 {
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+    margin-bottom: 1.25rem;
+  }
+
+  /* los títulos dentro de una descripción de Meetup se leen como texto destacado, no como otro titular */
+  .descripcion :global(h1),
+  .descripcion :global(h2),
+  .descripcion :global(h3),
+  .descripcion :global(h4) {
+    font-family: var(--font-body);
+    font-stretch: 100%;
+    font-size: 1.15rem;
+    font-weight: 750;
+    letter-spacing: 0;
+    line-height: 1.4;
+    margin: 1.5em 0 0.5em;
+    color: var(--ink);
+  }
+
+  .prosa :global(p) {
+    margin-bottom: 1em;
+    color: var(--silver);
+    font-size: 1.1rem;
+  }
+
+  .prosa :global(strong) {
+    color: var(--ink);
+  }
+
+  .prosa :global(a) {
+    color: var(--green-hi);
+  }
+
+  .prosa :global(ul),
+  .prosa :global(ol) {
+    color: var(--silver);
+    padding-left: 1.2rem;
+  }
+
+  .speakers ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .speakers li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .sp-foto .vinyl {
+    width: 4rem;
+    overflow: hidden;
+    border-width: 0.25rem;
+  }
+
+  .sp-foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sp-foto :global(.icon) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .sp-nom {
+    font-weight: 750;
+    font-size: 1.1rem;
+  }
+
+  .sp-rol,
+  .sp-charla {
+    color: var(--silver);
+  }
+
+  .galeria {
+    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  .galeria ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 2rem;
+  }
+
+  .gal-marco {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-width: 0.4rem;
+  }
+
+  .gal-marco :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 900px) {
+    .det-grid,
+    .det-cuerpo {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

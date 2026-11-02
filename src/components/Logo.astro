@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import { sitio } from '../lib/sitio';
+import { imagen } from '../lib/imagenes';
+
+interface Props {
+  /** Alto en rem del logo. */
+  tam?: number;
+  class?: string;
+}
+
+const { tam = 2.75, class: clase } = Astro.props;
+const logo = imagen('logos', sitio.logo);
+---
+
+{
+  logo ? (
+    <Image
+      src={logo}
+      alt=""
+      height={Math.round(tam * 16 * 2)}
+      loading="eager"
+      class:list={['logo-hex', clase]}
+      style={`--tam:${tam}rem`}
+    />
+  ) : (
+    <span class:list={['logo vinyl vinyl--verde forma--circulo', clase]} style={`--tam:${tam}rem`}>
+      <span class="logo-txt" aria-hidden="true">
+        UG
+        <br />
+        SCZ
+      </span>
+    </span>
+  )
+}
+
+<style>
+  .logo-hex {
+    height: var(--tam);
+    width: auto;
+    flex: none;
+  }
+
+  .logo {
+    width: var(--tam);
+    flex: none;
+    overflow: hidden;
+    border-width: calc(var(--tam) * 0.07);
+    padding: calc(var(--tam) * 0.14);
+  }
+
+  .logo-txt {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: 130%;
+    font-size: calc(var(--tam) * 0.2);
+    line-height: 0.95;
+  }
+</style>

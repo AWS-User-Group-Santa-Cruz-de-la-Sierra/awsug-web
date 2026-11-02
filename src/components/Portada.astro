@@ -1,0 +1,125 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { imagen } from '../lib/imagenes';
+import { fechaCompacta, marcaTipo, nombreTipo, type Evento } from '../lib/eventos';
+
+interface Props {
+  evento: Evento;
+  sizes?: string;
+  prioridad?: boolean;
+  class?: string;
+}
+
+const { evento, sizes = '(max-width: 760px) 100vw, 640px', prioridad = false, class: clase } = Astro.props;
+const foto = imagen('events', evento.data.portada);
+const alt = evento.data.portadaAlt ?? `Portada de ${evento.data.titulo}`;
+---
+
+{
+  foto ? (
+    <Image
+      src={foto}
+      alt={alt}
+      widths={[420, 720, 1080, 1440].filter((w) => w <= foto.width)}
+      sizes={sizes}
+      loading={prioridad ? 'eager' : 'lazy'}
+      fetchpriority={prioridad ? 'high' : undefined}
+      class:list={['portada', clase]}
+    />
+  ) : (
+    // arte de portada mientras el evento no tiene foto: tipo, marca, fecha, serie y la bandera cruceña
+    <div class:list={['portada portada-arte', `portada-arte--${evento.data.tipo}`, clase]} role="img" aria-label={alt}>
+      <span class="arte-tipo">{nombreTipo[evento.data.tipo]}</span>
+      <Icon name={marcaTipo[evento.data.tipo]} class="arte-marca" />
+      <span class="arte-pie">
+        <span class="arte-bandera" />
+        <span class="arte-fecha">{fechaCompacta(evento.inicio)}</span>
+        <span class="arte-serie">{evento.serie}</span>
+      </span>
+    </div>
+  )
+}
+
+<style>
+  .portada {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  .portada-arte {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      'tipo tipo'
+      '. marca'
+      'pie pie';
+    padding: 0.85rem 1rem;
+    container-type: size;
+    background-color: var(--ink);
+    color: var(--lid-deep);
+  }
+
+  .portada-arte--meetup {
+    background-color: var(--green);
+  }
+
+  .portada-arte--workshop {
+    background-color: var(--silver);
+  }
+
+  .arte-tipo {
+    grid-area: tipo;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: 118%;
+    font-size: clamp(0.9rem, 12cqi, 5rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+
+  .portada-arte :global(.arte-marca) {
+    grid-area: marca;
+    align-self: center;
+    width: 42cqmin;
+    height: 42cqmin;
+    rotate: -8deg;
+    opacity: 0.92;
+  }
+
+  .arte-pie {
+    grid-area: pie;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 4.2cqi, 1.3rem);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .arte-serie {
+    margin-left: auto;
+  }
+
+  /* bandera de Santa Cruz como mini sticker */
+  .arte-bandera {
+    flex: none;
+    width: 2.2em;
+    height: 1.45em;
+    border: 0.18em solid #fff;
+    border-radius: 0.25em;
+    background: linear-gradient(var(--green) 0 33.4%, #fff 33.4% 66.6%, var(--green) 66.6%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+    rotate: -6deg;
+  }
+
+  @container (max-width: 220px) {
+    .arte-fecha {
+      display: none;
+    }
+  }
+</style>

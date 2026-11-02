@@ -1,0 +1,154 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import { imagen } from '../lib/imagenes';
+
+interface Props {
+  lider: CollectionEntry<'lideres'>;
+  r?: number;
+  color?: 'verde' | 'plata' | 'blanco';
+}
+
+const { lider, r = 0, color = 'verde' } = Astro.props;
+const { nombre, titulo, links, encuadre } = lider.data;
+const foto = imagen('members', lider.data.foto);
+const iniciales = nombre
+  .split(/\s+/)
+  .map((p) => p[0])
+  .slice(0, 2)
+  .join('');
+const dev = import.meta.env.DEV;
+const lista = [
+  { nombre: 'LinkedIn', icono: 'linkedin-box-fill', url: links.linkedin },
+  { nombre: 'Instagram', icono: 'instagram-line', url: links.instagram },
+  { nombre: 'AWS Skill Builder', icono: 'graduation-cap-line', url: links.skillbuilder },
+  { nombre: 'TikTok', icono: 'tiktok-fill', url: links.tiktok },
+].filter((l) => l.url || dev);
+---
+
+<li class="lider">
+  <div class="sticker lider-st" data-sticker style={`--r:${r}deg`}>
+    <div class:list={['vinyl forma--circulo lider-foto', `vinyl--${color}`]}>
+      {
+        foto ? (
+          <Image
+            src={foto}
+            alt={`Foto de ${nombre}`}
+            width={720}
+            class="lider-img"
+            style={`--fx:${encuadre.x}%;--fy:${encuadre.y}%;--zoom:${encuadre.zoom}`}
+          />
+        ) : (
+          <span class="lider-ini" aria-hidden="true">
+            {iniciales}
+          </span>
+        )
+      }
+    </div>
+  </div>
+  <h3 class="lider-nom">{nombre}</h3>
+  <p class="lider-tit">{titulo}</p>
+  {
+    lista.length > 0 && (
+      <ul class="lider-links">
+        {lista.map((l) => (
+          <li>
+            {l.url ? (
+              <a href={l.url} target="_blank" rel="noopener" aria-label={`${l.nombre} de ${nombre}`} title={l.nombre}>
+                <Icon name={l.icono} />
+              </a>
+            ) : (
+              <span class="pendiente" title={`Falta el link de ${l.nombre} en src/data/lideres.json`}>
+                <Icon name={l.icono} />
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</li>
+
+<style>
+  .lider {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 0.4rem;
+  }
+
+  .lider-st {
+    width: min(100%, 14.5rem);
+    margin-bottom: 1.1rem;
+  }
+
+  .lider-foto {
+    overflow: hidden;
+    border-width: 0.5rem;
+  }
+
+  /* la cara queda al centro del círculo: se encuadra con x, y y zoom de lideres.json */
+  .lider :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--fx, 50%) var(--fy, 50%);
+    transform-origin: var(--fx, 50%) var(--fy, 50%);
+    transform: translate(calc(50% - var(--fx, 50%)), calc(50% - var(--fy, 50%))) scale(var(--zoom, 1));
+  }
+
+  .lider-ini {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: 140%;
+    font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+    letter-spacing: -0.04em;
+  }
+
+  .lider-nom {
+    font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  }
+
+  .lider-tit {
+    color: var(--silver);
+  }
+
+  .lider-links {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .lider-links a,
+  .lider-links .pendiente {
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 50%;
+    border: 2px solid var(--lid-line);
+    color: var(--ink);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  .lider-links a:hover {
+    border-color: var(--green-hi);
+    color: var(--green-hi);
+  }
+
+  .lider-links :global(.icon) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  .pendiente {
+    opacity: 0.4;
+    border-style: dashed !important;
+  }
+</style>

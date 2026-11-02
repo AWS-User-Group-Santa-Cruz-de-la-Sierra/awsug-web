@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base titulo="Página no encontrada">
+  <section class="section nf">
+    <div class="wrap nf-in">
+      <div class="sticker" data-sticker style="--r:-6deg">
+        <div class="vinyl vinyl--plata peel nf-st">404</div>
+      </div>
+      <div class="nf-txt">
+        <h1>Este sticker se despegó.</h1>
+        <p class="lead">La página que buscas no existe o cambió de lugar.</p>
+        <div class="nf-acc">
+          <a href="/" class="btn btn--activo">Volver al inicio</a>
+          <a href="/events/" class="btn btn--verde">
+            Ver eventos
+            <Icon name="arrow-right-line" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf-in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3rem;
+    min-height: 50vh;
+  }
+
+  .nf-st {
+    padding: 1.5rem 2.25rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-stretch: 140%;
+    font-size: clamp(4rem, 2rem + 8vw, 8rem);
+    line-height: 1;
+  }
+
+  .nf-txt {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 36rem;
+  }
+
+  .nf-txt h1 {
+    font-size: clamp(2.2rem, 1.2rem + 3vw, 4rem);
+  }
+
+  .nf-acc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

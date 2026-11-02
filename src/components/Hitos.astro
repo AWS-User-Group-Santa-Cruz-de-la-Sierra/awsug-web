@@ -1,0 +1,205 @@
+---
+import Portada from './Portada.astro';
+import Icon from './Icon.astro';
+import { mesAnio, type Evento } from '../lib/eventos';
+
+interface Props {
+  eventos: Evento[];
+  /** A dónde lleva el hueco "tu próximo sticker", que abre la lista (los pasados van del más reciente al más antiguo). */
+  huecoHref?: string;
+}
+
+const { eventos, huecoHref = '/events/' } = Astro.props;
+
+// Cada sticker cae con su propio giro, desplazamiento y forma: así se ve como una tapa
+// que se fue llenando con el tiempo, no como una grilla.
+const giros = [-6, 4, -2, 7, -4, 3, -7, 2];
+// cada sticker se corre hacia el anterior para montarse sobre su borde
+// (solo hacia abajo y poco, para que un título largo no choque con la fila siguiente)
+const desplazamientos = [
+  [0, 0],
+  [-3.2, 1.4],
+  [-2.2, 0],
+  [-3.6, 1.8],
+  [-2.6, 0.6],
+  [-3, 0.2],
+];
+const formas = ['cuadrada', 'vertical', 'horizontal', 'cuadrada', 'horizontal', 'vertical'];
+---
+
+<ol class="hitos" data-sticker-track>
+  <li class="hito hito--hueco" style="--dx:0rem;--dy:0rem;z-index:0">
+    <a href={huecoHref} class="hueco">
+      <span class="hueco-in">
+        <Icon name="sparkling-2-fill" />
+        <span>Aquí va el sticker de tu próximo evento</span>
+      </span>
+    </a>
+  </li>
+  {
+    eventos.map((e, i) => {
+      const lugar = i + 1; // el hueco ocupa el primer lugar
+      // el primer sticker no se monta sobre el hueco, para que su texto se lea entero
+      const [dx, dy] = i === 0 ? [0.4, 0.8] : desplazamientos[lugar % desplazamientos.length];
+      return (
+        <li class:list={['hito', `hito--${formas[lugar % formas.length]}`]} style={`--dx:${dx}rem;--dy:${dy}rem;z-index:${lugar}`}>
+          <a href={e.url} class="hito-link">
+            <div class="sticker" data-sticker style={`--r:${giros[lugar % giros.length]}deg`}>
+              <div class:list={['vinyl vinyl--blanco peel hito-foto', lugar % 5 === 2 && 'holo']}>
+                <Portada evento={e} sizes="(max-width: 640px) 50vw, 340px" />
+              </div>
+            </div>
+            <p class="hito-pie">
+              <span class="mono hito-serie">{e.serie}</span>
+              <span class="mono hito-fecha">{mesAnio(e.inicio)}</span>
+              <span class="hito-tit">{e.data.titulo}</span>
+              {e.data.ejemplo && <span class="ejemplo">Ejemplo</span>}
+            </p>
+          </a>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .hitos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 4rem 1.25rem;
+    align-items: start;
+  }
+
+  .hito {
+    position: relative;
+    max-width: 24rem;
+    translate: var(--dx) var(--dy);
+  }
+
+  .hito-link {
+    display: grid;
+    gap: 0.9rem;
+    text-decoration: none;
+  }
+
+  .hito-foto {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-width: 0.4rem;
+    border-radius: 1.3rem;
+  }
+
+  /* las formas variadas son para el arte sin foto; un afiche conserva su proporción */
+  .hito--vertical .hito-foto:not(:has(> img)) {
+    aspect-ratio: 4 / 5;
+    border-radius: 2rem 0.7rem 2rem 0.7rem;
+  }
+
+  .hito--horizontal .hito-foto:not(:has(> img)) {
+    aspect-ratio: 5 / 4;
+    border-radius: 0.8rem;
+  }
+
+  /* vinilo holográfico: el borde troquelado refleja como tornasol */
+  .holo {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--ink), var(--ink)) padding-box,
+      conic-gradient(from 30deg, #e9f7ff, #c9b6ff, #b6ffe0, #fff6c8, #ffd0f0, #e9f7ff) border-box;
+  }
+
+  .hito-pie {
+    display: grid;
+    gap: 0.15rem;
+    justify-items: start;
+    padding-inline: 0.25rem;
+    /* deja libre el borde que monta el sticker siguiente */
+    max-width: calc(100% - 3.5rem);
+  }
+
+  .hito-serie {
+    color: var(--green-hi);
+  }
+
+  .hito-fecha {
+    color: var(--muted);
+  }
+
+  .hito-tit {
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin-top: 0.25rem;
+  }
+
+  .hito-link:hover .hito-tit {
+    text-decoration: underline;
+  }
+
+  .hito-pie .ejemplo {
+    margin-top: 0.35rem;
+  }
+
+  /* hueco para el próximo sticker: contorno troquelado vacío */
+  .hueco {
+    display: grid;
+    aspect-ratio: 16 / 9;
+    padding: 1.25rem;
+    border: 2px dashed rgb(192 199 208 / 0.45);
+    border-radius: 1.3rem;
+    color: var(--silver);
+    text-decoration: none;
+    rotate: 3deg;
+    transition:
+      border-color 0.25s,
+      color 0.25s;
+  }
+
+  .hueco:hover {
+    border-color: var(--green-hi);
+    color: var(--green-hi);
+  }
+
+  .hueco-in {
+    display: grid;
+    gap: 0.75rem;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    font-weight: 700;
+    max-width: 14rem;
+    margin: auto;
+  }
+
+  .hueco-in :global(.icon) {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @media (max-width: 560px) {
+    .hitos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 1rem;
+    }
+
+    .hito {
+      translate: calc(var(--dx) * 0.35) calc(var(--dy) * 0.5);
+    }
+
+    .hito-pie {
+      max-width: calc(100% - 1rem);
+    }
+
+    .hito-tit {
+      font-size: 0.95rem;
+    }
+
+    .hueco {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>

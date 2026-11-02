@@ -1,0 +1,56 @@
+[
+  {
+    "id": "afu-tse",
+    "nombre": "Afu Tse",
+    "titulo": "Líder · AWS User Group Santa Cruz",
+    "foto": "afu-tse.jpeg",
+    "encuadre": {
+      "x": 45,
+      "y": 24,
+      "zoom": 1.9
+    },
+    "orden": 1,
+    "links": {
+      "linkedin": "",
+      "instagram": "",
+      "skillbuilder": "",
+      "tiktok": ""
+    }
+  },
+  {
+    "id": "rodolfo-justiniano",
+    "nombre": "Rodolfo Justiniano",
+    "titulo": "Líder · AWS User Group Santa Cruz",
+    "foto": "rodolfo-justiniano.png",
+    "encuadre": {
+      "x": 46,
+      "y": 24,
+      "zoom": 2.1
+    },
+    "orden": 2,
+    "links": {
+      "linkedin": "",
+      "instagram": "",
+      "skillbuilder": "",
+      "tiktok": ""
+    }
+  },
+  {
+    "id": "isaac-jaldin",
+    "nombre": "Isaac Jaldin",
+    "titulo": "Líder · AWS User Group Santa Cruz",
+    "foto": "isaac-jaldin.png",
+    "encuadre": {
+      "x": 37,
+      "y": 40,
+      "zoom": 2.8
+    },
+    "orden": 3,
+    "links": {
+      "linkedin": "",
+      "instagram": "",
+      "skillbuilder": "",
+      "tiktok": ""
+    }
+  }
+]

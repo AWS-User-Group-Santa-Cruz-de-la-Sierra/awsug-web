@@ -1,0 +1,237 @@
+---
+import Icon from './Icon.astro';
+import Portada from './Portada.astro';
+import { fechaLarga, horario, linkPrincipal, nombreModalidad, nombreTipo, type Evento } from '../lib/eventos';
+
+interface Props {
+  evento: Evento;
+  /** Nivel del título del evento. */
+  nivel?: 'h2' | 'h3';
+  /** true si el evento ya pasó: oculta el llamado a inscribirse. */
+  pasado?: boolean;
+  prioridad?: boolean;
+  r?: number;
+}
+
+const { evento, nivel = 'h3', pasado = false, prioridad = false, r = -2 } = Astro.props;
+const Titulo = nivel;
+const principal = linkPrincipal(evento);
+const otros = evento.data.links.filter((l) => l !== principal);
+const { lugar, speakers } = evento.data;
+---
+
+<article class="ficha">
+  <div class="sticker ficha-foto" data-sticker style={`--r:${r}deg`}>
+    <a href={evento.url} class="vinyl vinyl--blanco peel ficha-marco" tabindex="-1" aria-hidden="true">
+      <Portada evento={evento} prioridad={prioridad} sizes="(max-width: 860px) 100vw, 46vw" />
+    </a>
+  </div>
+
+  <div class="ficha-info">
+    <Titulo class="ficha-tit">
+      <a href={evento.url}>{evento.data.titulo}</a>
+    </Titulo>
+    <p class="ficha-top mono meta-ev">
+      <span>{evento.serie}</span>
+      <span class="ficha-tipo">{nombreTipo[evento.data.tipo]}</span>
+      {evento.data.modalidad !== 'presencial' && <span>{nombreModalidad[evento.data.modalidad]}</span>}
+      {evento.data.ejemplo && <span class="ejemplo">Ejemplo</span>}
+    </p>
+    <p class="ficha-res">{evento.data.resumen}</p>
+
+    <dl class="ficha-datos">
+      <div>
+        <dt><Icon name="calendar-event-line" label="Fecha" /></dt>
+        <dd class="tabular">{fechaLarga(evento.inicio)}</dd>
+      </div>
+      <div>
+        <dt><Icon name="time-line" label="Hora" /></dt>
+        <dd class="tabular">{horario(evento)}</dd>
+      </div>
+      <div>
+        <dt><Icon name="map-pin-2-line" label="Lugar" /></dt>
+        <dd>
+          {
+            lugar.mapa ? (
+              <a href={lugar.mapa} target="_blank" rel="noopener">
+                {lugar.nombre}
+              </a>
+            ) : (
+              lugar.nombre
+            )
+          }
+          {lugar.direccion && <span class="ficha-dir">{lugar.direccion}</span>}
+        </dd>
+      </div>
+      {
+        speakers.length > 0 && (
+          <div>
+            <dt>
+              <Icon name="mic-line" label="Speakers" />
+            </dt>
+            <dd>
+              <ul class="ficha-speakers">
+                {speakers.map((s) => (
+                  <li>
+                    {s.linkedin ? (
+                      <a href={s.linkedin} target="_blank" rel="noopener">
+                        {s.nombre}
+                      </a>
+                    ) : (
+                      <span>{s.nombre}</span>
+                    )}
+                    {s.charla && <span class="ficha-charla">{s.charla}</span>}
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        )
+      }
+    </dl>
+
+    <div class="ficha-acc">
+      {
+        principal && (
+          <a
+            href={principal.url}
+            class:list={['btn', pasado ? 'btn--plata' : 'btn--activo']}
+            target="_blank"
+            rel="noopener"
+          >
+            {pasado ? principal.etiqueta : 'Inscribirme'}
+            <Icon name="arrow-right-up-line" />
+          </a>
+        )
+      }
+      {
+        otros.map((l) => (
+          <a href={l.url} class="btn btn--verde" target="_blank" rel="noopener">
+            {l.etiqueta}
+            <Icon name="arrow-right-up-line" />
+          </a>
+        ))
+      }
+      <a href={evento.url} class="link-flecha">
+        Detalles
+        <Icon name="arrow-right-line" />
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .ficha {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(1.75rem, 1rem + 3vw, 4rem);
+    align-items: center;
+  }
+
+  .ficha-marco {
+    display: block;
+    text-decoration: none;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-width: 0.45rem;
+    border-radius: 1.6rem;
+  }
+
+  .ficha-info {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+  }
+
+  .ficha-top {
+    color: var(--muted);
+    margin-top: -0.35rem;
+  }
+
+  .ficha-tipo {
+    color: var(--green-hi);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .ficha-tit {
+    font-size: clamp(1.8rem, 1.1rem + 2.2vw, 3rem);
+    font-stretch: 110%;
+  }
+
+  .ficha-tit a {
+    text-decoration: none;
+  }
+
+  .ficha-tit a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  .ficha-res {
+    color: var(--silver);
+    font-size: 1.1rem;
+    max-width: 50ch;
+  }
+
+  .ficha-datos {
+    margin: 0.3rem 0 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .ficha-datos > div {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  .ficha-datos dt {
+    color: var(--green-hi);
+    padding-top: 0.15rem;
+  }
+
+  .ficha-datos dt :global(.icon) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .ficha-datos dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ficha-datos dd::first-letter {
+    text-transform: uppercase;
+  }
+
+  .ficha-dir,
+  .ficha-charla {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .ficha-speakers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .ficha-acc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem 1.1rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 860px) {
+    .ficha {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

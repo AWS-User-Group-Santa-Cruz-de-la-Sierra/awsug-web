@@ -1,0 +1,154 @@
+---
+import Icon from './Icon.astro';
+import { redes } from '../lib/sitio';
+
+interface Props {
+  variante?: 'fila' | 'stickers';
+}
+
+const { variante = 'fila' } = Astro.props;
+const dev = import.meta.env.DEV;
+// En la fila solo se muestran las redes con URL (en desarrollo se ven las que faltan, tachadas).
+// Los stickers del cierre siempre están: si falta el link dicen "pronto".
+const visibles = variante === 'stickers' ? redes : redes.filter((r) => r.url || dev);
+---
+
+{
+  visibles.length > 0 && (
+    <ul class:list={['redes', `redes--${variante}`]} data-sticker-group>
+      {visibles.map((r, i) => (
+        <li
+          class:list={[variante === 'stickers' && 'sticker']}
+          data-sticker={variante === 'stickers' ? '' : undefined}
+          style={variante === 'stickers' ? `--r:${[-6, 4, -3, 7][i % 4]}deg` : undefined}
+        >
+          {r.url ? (
+            <a href={r.url} target="_blank" rel="noopener" class="red" aria-label={`${r.nombre} del grupo`}>
+              <Icon name={r.icono} />
+              <span>{r.nombre}</span>
+            </a>
+          ) : variante === 'stickers' ? (
+            <span class="red red--pronto">
+              <Icon name={r.icono} />
+              <span class="red-nom">{r.nombre}</span>
+              <small>pronto</small>
+            </span>
+          ) : (
+            <span class="red red--pendiente" title="Falta el link en src/data/sitio.json">
+              <Icon name={r.icono} />
+              <span>{r.nombre}</span>
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .redes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+
+  .red {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.75rem;
+    color: var(--silver);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .red:hover {
+    color: var(--ink);
+  }
+
+  .red :global(.icon) {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .red--pendiente {
+    opacity: 0.55;
+    text-decoration: line-through dashed;
+  }
+
+  .redes--stickers {
+    gap: 1rem;
+  }
+
+  .red--pronto small {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .redes--stickers .red--pronto {
+    border-style: dashed;
+  }
+
+  .redes--stickers .red {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 6.25rem;
+    height: 6.25rem;
+    border: var(--cut) solid var(--ink);
+    border-radius: 50%;
+    background: var(--lid-raised);
+    color: var(--ink);
+    font-size: 0.8125rem;
+  }
+
+  .redes--stickers li:nth-child(2) .red {
+    background: var(--green);
+    color: var(--lid-deep);
+  }
+
+  .redes--stickers li:nth-child(4) .red {
+    background: var(--ink);
+    color: var(--lid);
+  }
+
+  .redes--stickers .red :global(.icon) {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  @media (max-width: 480px) {
+    .redes--stickers {
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+    }
+
+    .redes--stickers .red {
+      width: 5rem;
+      height: 5rem;
+      font-size: 0.72rem;
+    }
+
+    .redes--stickers .red :global(.icon) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    /* en el celular el ícono nombra la red; el texto queda para lectores de pantalla */
+    .redes--stickers .red > span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .red--pronto small {
+      font-size: 0.75rem;
+    }
+  }
+</style>

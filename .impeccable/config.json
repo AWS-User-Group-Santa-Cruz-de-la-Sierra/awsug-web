@@ -1,0 +1,89 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-01T19:46:24.509Z",
+        "reason": "user confirmed: asked in chat for a green-white-silver effect on 'Santa Cruz de la Sierra' in the slogan"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/components/Lema.astro"
+        ],
+        "createdAt": "2026-11-01T20:08:24.619Z",
+        "reason": "user confirmed: asked in chat for a green-white-silver effect on 'Santa Cruz de la Sierra' in the slogan"
+      },
+      {
+        "rule": "ai-color-palette",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-01T20:17:31.014Z",
+        "reason": "spent decision-round sketch, gitignored and never shipped; violet #8900F2 is the user's stated brand color"
+      },
+      {
+        "rule": "oversized-h1",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-11-01T20:17:31.038Z",
+        "reason": "spent, unchosen decision-round sketch; gitignored and never shipped"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".superpowers/brainstorm/2594-1793561586/content/paletas.html"
+        ],
+        "createdAt": "2026-11-01T21:35:23.274Z",
+        "reason": "throwaway brainstorm/decision mockup from this session, gitignored and never shipped; predates DESIGN.md"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".superpowers/brainstorm/2594-1793561586/content/landing-estructura.html"
+        ],
+        "createdAt": "2026-11-01T21:35:23.300Z",
+        "reason": "throwaway brainstorm/decision mockup from this session, gitignored and never shipped; predates DESIGN.md"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-01T21:35:23.325Z",
+        "reason": "throwaway brainstorm/decision mockup from this session, gitignored and never shipped; predates DESIGN.md"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-11-01T21:35:23.347Z",
+        "reason": "throwaway brainstorm/decision mockup from this session, gitignored and never shipped; predates DESIGN.md"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-marcador.html"
+        ],
+        "createdAt": "2026-11-01T21:35:23.370Z",
+        "reason": "throwaway brainstorm/decision mockup from this session, gitignored and never shipped; predates DESIGN.md"
+      }
+    ]
+  }
+}

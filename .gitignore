@@ -1,0 +1,25 @@
+# build
+dist/
+.astro/
+
+# dependencias
+node_modules/
+
+# logs y sistema
+npm-debug.log*
+.DS_Store
+
+# entorno
+.env
+.env.*
+
+# herramientas de diseño locales
+.superpowers/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/decision/
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+
+# exportaciones crudas de Meetup: traen nombres y fotos de quienes se anotaron
+assets/events/*.json

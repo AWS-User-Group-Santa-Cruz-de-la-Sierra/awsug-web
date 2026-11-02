@@ -1,0 +1,598 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Lema from '../components/Lema.astro';
+import Redes from '../components/Redes.astro';
+import Icon from '../components/Icon.astro';
+import EventoSticker from '../components/EventoSticker.astro';
+import EventoFicha from '../components/EventoFicha.astro';
+import Hitos from '../components/Hitos.astro';
+import Lider from '../components/Lider.astro';
+import Merch from '../components/Merch.astro';
+import { sitio } from '../lib/sitio';
+import { imagen } from '../lib/imagenes';
+import { obtenerEventos, fechaCorta } from '../lib/eventos';
+
+const { proximos, pasados } = await obtenerEventos();
+const [proximo, ...masProximos] = proximos;
+const lideres = (await getCollection('lideres')).sort((a, b) => a.data.orden - b.data.orden);
+const logo = imagen('logos', sitio.logo);
+const coloresLider = ['verde', 'plata', 'blanco'] as const;
+const girosLider = [-4, 3, -2];
+
+const actividades = [
+  {
+    nombre: 'Meetups',
+    detalle: 'Charlas donde alguien de la comunidad comparte lo que aprendió construyendo en AWS.',
+    vinilo: 'vinyl--verde',
+    icono: 'mic-2-fill',
+  },
+  {
+    nombre: 'Workshops hands-on',
+    detalle: 'Sesiones prácticas con la consola abierta: se aprende haciendo.',
+    vinilo: 'vinyl--plata',
+    icono: 'terminal-box-fill',
+  },
+  {
+    nombre: 'Eventos grandes',
+    detalle: 'Encuentros que reúnen a toda la comunidad cloud de la ciudad.',
+    vinilo: 'vinyl--blanco',
+    icono: 'team-fill',
+  },
+];
+---
+
+<Base>
+  <!-- HUB -->
+  <section id="hub" class="hero" data-hero>
+    <div class="wrap hero-in">
+      <div class="hero-txt">
+        <Lema />
+        <p class="lead hero-lead">
+          Somos el AWS User Group de Santa Cruz de la Sierra: estudiantes, profesionales y entusiastas que se reúnen
+          para aprender más y más sobre AWS.
+        </p>
+        <div class="hero-acc">
+          {
+            // sin evento próximo, el sticker del hero ya invita a unirse en Meetup
+            sitio.meetup && proximo ? (
+              <a href={sitio.meetup} class="btn btn--activo" target="_blank" rel="noopener">
+                Únete en Meetup
+                <Icon name="arrow-right-up-line" />
+              </a>
+            ) : null
+          }
+          <a href="/events/" class="btn btn--verde">
+            Ver eventos
+            <Icon name="arrow-right-line" />
+          </a>
+        </div>
+        <Redes />
+      </div>
+
+      <div class="tapa" data-sticker-group>
+        <!-- una sola diagonal: de arriba a la derecha hacia abajo a la izquierda -->
+        <div class="c-sello" data-depth style="--depth:-0.12">
+          <div class="sticker" data-sticker style="--r:9deg">
+            {
+              logo ? (
+                <Image src={logo} alt={sitio.nombre} width={420} class="sello-hex" loading="eager" />
+              ) : (
+                <div class="vinyl vinyl--verde forma--circulo sello" aria-hidden="true">
+                  <span>
+                    AWS
+                    <br />
+                    User Group
+                    <br />
+                    <b>Santa Cruz</b>
+                  </span>
+                </div>
+              )
+            }
+          </div>
+        </div>
+        <div class="c-bandera" data-depth style="--depth:-0.06" aria-hidden="true">
+          <div class="sticker" data-sticker style="--r:-7deg">
+            <div class="vinyl vinyl--bandera bandera"></div>
+          </div>
+        </div>
+        <div class="c-evento">
+          <EventoSticker evento={proximo} r={-3} />
+          <!-- anclados al borde inferior del evento: nunca tapan sus botones, mida lo que mida el título -->
+          <div class="c-burbuja" data-depth style="--depth:0.08" aria-hidden="true">
+            <div class="sticker" data-sticker style="--r:6deg">
+              <div class="vinyl vinyl--plata burbuja">Los pelaus<br />en cloud</div>
+            </div>
+          </div>
+          <div class="c-handson" data-depth style="--depth:0.16" aria-hidden="true">
+            <div class="sticker" data-sticker style="--r:-8deg">
+              <div class="vinyl vinyl--naranja forma--pildora handson">metamojle pariente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIÉNES SOMOS / QUÉ HACEMOS -->
+  <section id="nosotros" class="section nosotros">
+    <div class="wrap nosotros-in">
+      <h2 class="n-tit">Aprendemos AWS juntos, en Santa Cruz.</h2>
+      <p class="lead n-lead">
+        Somos una comunidad de estudiantes, profesionales y entusiastas. Unos recién empiezan, otros ya llevan años
+        en la nube, y en cada encuentro alguien sale sabiendo algo nuevo.
+      </p>
+      <h2 class="hacemos-tit">Qué hacemos</h2>
+        <ul class="hacemos-lista" data-sticker-group>
+          {
+            actividades.map((a, i) => (
+              <li class="hacer">
+                <span
+                  class="sticker hacer-punto"
+                  data-sticker
+                  style={`--r:${[-8, 6, -4][i]}deg`}
+                  aria-hidden="true"
+                >
+                  <span class:list={['vinyl forma--circulo', a.vinilo]}>
+                    <Icon name={a.icono} />
+                  </span>
+                </span>
+                <div>
+                  <p class="hacer-nom" set:html={a.nombre.replace(/(\S+-\S+)/g, '<span class="nowrap">$1</span>')} />
+                  <p class="hacer-det">{a.detalle}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+    </div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="agenda" class="section agenda">
+    <div class="wrap">
+      <div class="sec-cab">
+        <h2>Lo que viene</h2>
+        <a href="/events/" class="link-flecha">
+          Toda la agenda
+          <Icon name="arrow-right-line" />
+        </a>
+      </div>
+      {
+        proximo ? (
+          <EventoFicha evento={proximo} r={-2} />
+        ) : (
+          <p class="lead">
+            Todavía no hay fecha para el próximo evento.{' '}
+            {sitio.meetup ? (
+              <a href={sitio.meetup} target="_blank" rel="noopener">
+                Únete al grupo en Meetup
+              </a>
+            ) : (
+              'Síguenos en redes'
+            )}{' '}
+            y te avisamos apenas se abra la inscripción.
+          </p>
+        )
+      }
+      {
+        masProximos.length > 0 && (
+          <ul class="mas-proximos">
+            {masProximos.map((e) => (
+              <li>
+                <a href={e.url}>
+                  <span class="mono">{e.serie}</span>
+                  <span class="mas-tit">{e.data.titulo}</span>
+                  <span class="tabular mas-fecha">{fechaCorta(e.inicio)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- HITOS -->
+  <section id="hitos" class="section hitos-sec">
+    <div class="wrap">
+      <div class="sec-cab">
+        <div>
+          <h2>Lo que ya vivimos</h2>
+          <p class="lead">Cada evento deja su sticker en la tapa.</p>
+        </div>
+        {
+          pasados.length > 8 && (
+            <a href="/events/#pasados" class="link-flecha">
+              Ver todos
+              <Icon name="arrow-right-line" />
+            </a>
+          )
+        }
+      </div>
+      <Hitos eventos={pasados.slice(0, 8)} />
+    </div>
+  </section>
+
+  <!-- LIDERAZGO -->
+  <section id="liderazgo" class="section">
+    <div class="wrap">
+      <div class="sec-cab">
+        <h2>Quienes lo organizan</h2>
+      </div>
+      <ul class="lideres" data-sticker-group>
+        {
+          lideres.map((l, i) => (
+            <Lider lider={l} r={girosLider[i % 3]} color={coloresLider[i % 3]} />
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- MERCH -->
+  <section id="merch" class="section">
+    <div class="wrap">
+      <div class="sec-cab">
+        <div>
+          <h2>Merch de la comunidad</h2>
+          <p class="lead">Lo que hemos diseñado para llevar el grupo puesto.</p>
+        </div>
+      </div>
+      <Merch />
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- HUB ---------- */
+  .hero {
+    padding-block: clamp(2.5rem, 1rem + 5vw, 5.5rem) clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .hero-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+  }
+
+  .hero-txt {
+    display: grid;
+    gap: 1.6rem;
+    align-content: center;
+    container-type: inline-size;
+  }
+
+  .hero-lead {
+    max-width: 44ch;
+  }
+
+  .hero-acc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* la tapa: los stickers caen sobre una diagonal de arriba a la derecha hacia abajo a la izquierda */
+  .tapa {
+    position: relative;
+    min-height: 39rem;
+  }
+
+  .tapa > * {
+    position: absolute;
+  }
+
+  .c-sello {
+    top: 0;
+    right: 0;
+    width: clamp(9rem, 11.5vw, 11.5rem);
+    z-index: 1;
+  }
+
+  .sello {
+    border-width: 0.45rem;
+    overflow: hidden;
+    padding: 1.1rem;
+  }
+
+  .sello span {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 120%;
+    font-size: clamp(0.85rem, 0.6rem + 0.5vw, 1.05rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .sello b {
+    font-weight: 900;
+    font-size: 1.2em;
+  }
+
+  /* troquel blanco que sigue la silueta del hexágono */
+  .c-sello :global(.sello-hex) {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0.22rem 0 0 var(--ink)) drop-shadow(-0.22rem 0 0 var(--ink)) drop-shadow(0 0.22rem 0 var(--ink))
+      drop-shadow(0 -0.22rem 0 var(--ink));
+  }
+
+  /* la bandera queda medio pegada sobre la esquina del sticker del evento */
+  .c-bandera {
+    top: 6.6rem;
+    right: 22%;
+    z-index: 3;
+  }
+
+  .bandera {
+    width: 6rem;
+    height: 4rem;
+  }
+
+  .c-evento {
+    top: 10.5rem;
+    left: 9%;
+    right: 3%;
+    z-index: 2;
+  }
+
+  /* la burbuja cuelga del borde inferior izquierdo del evento */
+  .c-burbuja {
+    position: absolute;
+    top: calc(100% - 0.2rem);
+    left: -11%;
+    z-index: 3;
+  }
+
+  .burbuja {
+    padding: 0.6rem 1.1rem 0.65rem;
+    border-radius: 1.4rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 118%;
+    font-size: 1.3rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .burbuja::before {
+    content: '';
+    position: absolute;
+    left: 1.4rem;
+    bottom: -1.05rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    background: inherit;
+    border: inherit;
+    border-top: 0;
+    border-left: 0;
+    border-radius: 0 0 0.3rem 0;
+    rotate: 45deg;
+    z-index: -1;
+  }
+
+  .c-handson {
+    position: absolute;
+    top: calc(100% + 3.6rem);
+    left: 14%;
+    z-index: 3;
+  }
+
+  .handson {
+    padding: 0.5rem 1.15rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 118%;
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .hero-in {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tapa {
+      min-height: 0;
+      padding-block: 5rem 7rem;
+    }
+
+    .tapa > .c-evento {
+      position: relative;
+      inset: auto;
+      max-width: 26rem;
+      margin-inline: 0.5rem 1rem;
+    }
+
+    .c-sello {
+      top: -0.5rem;
+      right: 0;
+      width: 5.5rem;
+    }
+
+    .sello {
+      padding: 0.55rem;
+    }
+
+    .sello span {
+      font-size: 0.6rem;
+    }
+
+    .c-bandera {
+      top: 2.4rem;
+      right: 7rem;
+    }
+
+    .bandera {
+      width: 4.2rem;
+      height: 2.8rem;
+    }
+
+    .c-burbuja {
+      top: calc(100% - 0.2rem);
+      left: -0.25rem;
+    }
+
+    .burbuja {
+      font-size: 0.95rem;
+    }
+
+    .c-handson {
+      top: calc(100% + 3rem);
+      left: auto;
+      right: 2%;
+    }
+
+    .handson {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* ---------- NOSOTROS ---------- */
+  .nosotros-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 3rem) clamp(2.5rem, 6vw, 6rem);
+    align-items: end;
+  }
+
+  .n-tit {
+    max-width: 16ch;
+  }
+
+  .hacemos-tit {
+    align-self: start;
+    margin-top: clamp(3rem, 2rem + 4vw, 6rem);
+    font-size: clamp(2rem, 1.1rem + 3vw, 3.6rem);
+  }
+
+  .hacemos-lista {
+    list-style: none;
+    margin: clamp(3rem, 2rem + 4vw, 6rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+  }
+
+  .hacer {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .hacer-punto {
+    display: block;
+  }
+
+  .hacer-punto .vinyl {
+    width: 4rem;
+    border-width: 0.3rem;
+  }
+
+  .hacer-punto :global(.icon) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .hacer-nom {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 118%;
+    font-size: clamp(1.35rem, 1rem + 0.9vw, 1.75rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hacer-nom :global(.nowrap) {
+    white-space: nowrap;
+  }
+
+  .hacer-det {
+    color: var(--silver);
+    max-width: 42ch;
+  }
+
+  @media (max-width: 860px) {
+    .nosotros-in {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hacemos-lista {
+      margin-top: 0.5rem;
+    }
+  }
+
+  /* ---------- CABECERAS DE SECCIÓN ---------- */
+  .sec-cab {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(2.25rem, 1.5rem + 2.5vw, 4rem);
+  }
+
+  .sec-cab .lead {
+    margin-top: 0.9rem;
+  }
+
+  /* ---------- AGENDA ---------- */
+  .agenda {
+    background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.025) 30%, transparent);
+  }
+
+  .mas-proximos {
+    list-style: none;
+    margin: 3.5rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--lid-line);
+  }
+
+  .mas-proximos a {
+    display: grid;
+    grid-template-columns: 6rem 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    min-height: 3.5rem;
+    padding-block: 0.8rem;
+    border-bottom: 1px solid var(--lid-line);
+    text-decoration: none;
+  }
+
+  .mas-proximos a:hover .mas-tit {
+    text-decoration: underline;
+  }
+
+  .mas-proximos .mono {
+    color: var(--green-hi);
+  }
+
+  .mas-tit {
+    font-weight: 700;
+  }
+
+  .mas-fecha {
+    color: var(--silver);
+  }
+
+  /* ---------- LIDERAZGO ---------- */
+  .lideres {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 3.5rem 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .lideres > :global(li:nth-child(2)) {
+      margin-top: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { sitio } from '../lib/sitio';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  /** URL absoluta o relativa de la imagen para compartir (1200×630). */
+  imagen?: string;
+  tipoOg?: 'website' | 'article';
+}
+
+const { titulo, descripcion = sitio.descripcion, imagen = '/og.png', tipoOg = 'website' } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} · ${sitio.nombreCorto}` : sitio.nombre;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+const imagenAbs = new URL(imagen, Astro.site);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0b132b" />
+
+    <meta property="og:type" content={tipoOg} />
+    <meta property="og:site_name" content={sitio.nombre} />
+    <meta property="og:locale" content="es_BO" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagenAbs} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      // Las animaciones de los stickers solo se activan con JS y sin "reducir movimiento".
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion');
+      }
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <div class="tapa-obj">
+      <Nav />
+      <main id="contenido">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+    <script>
+      import '../scripts/stickers';
+    </script>
+  </body>
+</html>
