@@ -1,45 +1,34 @@
 ---
 name: publicar-sitio
-description: Construye y publica el sitio del AWS UG Santa Cruz en su bucket de Amazon S3. Úsala solo cuando el maintainer pida explícitamente publicar, subir, desplegar o "deployar" el sitio, por ejemplo después de agregar o cerrar un evento.
+description: Publica el sitio del AWS UG Santa Cruz en awsug.scz.net lanzando el workflow de GitHub Actions. Úsala solo cuando el maintainer pida explícitamente publicar, subir, desplegar o "deployar" el sitio, por ejemplo después de agregar o cerrar un evento.
 ---
 
-# Publicar el sitio en S3
+# Publicar el sitio
 
 Publicar cambia lo que ve todo el público, así que **hazlo solo si el maintainer lo pidió en este pedido**. Tener los cambios listos no es permiso para publicar.
 
-## 1. Datos que necesitas
+La publicación la hace siempre GitHub Actions (`.github/workflows/publicar.yml`): build, subida a S3 e invalidación de CloudFront. No subas archivos al bucket a mano.
 
-- **Nombre del bucket**: si no está en el pedido ni en `README.md`, pregúntalo. No lo adivines.
-- **URL pública**: es `https://awsug.scz.net`, el valor por defecto en `astro.config.mjs`. Si el maintainer publica en otra URL, construye con `SITE_URL=<url> npm run build`; si no, los links al compartir apuntarán al dominio equivocado.
-- **Credenciales de AWS**: corre `aws sts get-caller-identity`. Si falla, pide al maintainer que inicie sesión con `! aws sso login` o con su perfil, y no sigas.
+## 1. Antes de publicar
 
-## 2. Build
+- Corre `npm run build` localmente. Si falla, arregla el error antes de seguir.
+- El workflow publica lo que está en `main` de GitHub. Los cambios tienen que estar commiteados y en `main`; si no lo están, pregúntale al maintainer si los commiteas y haces push (o si abre un PR). Un push a `main` ya publica solo: no hace falta el paso 2.
+- Revisa que `gh auth status` funcione. Si no, pídele al maintainer `! gh auth login` y no sigas.
 
-```bash
-npm ci          # solo si node_modules no existe o cambió package-lock.json
-npm run build
-```
-
-Si el build falla, arregla el error antes de seguir. Nunca publiques un `dist/` viejo.
-
-## 3. Subir
+## 2. Lanzar el workflow (si no hubo push)
 
 ```bash
-aws s3 sync dist/ s3://<bucket> --delete
+gh workflow run publicar.yml --ref main
+gh run list --workflow publicar.yml --limit 1
+gh run watch <run-id> --exit-status
 ```
 
-`--delete` borra del bucket los archivos que ya no existen en `dist/`, como un evento cancelado. Antes de correrlo, muestra al maintainer el comando con el bucket real.
+Si falla, muestra el paso que falló con `gh run view <run-id> --log-failed` y explica el error.
 
-Si el sitio está detrás de CloudFront, invalida la caché después de subir:
+## 3. Confirmar
 
-```bash
-aws cloudfront create-invalidation --distribution-id <id> --paths "/*"
-```
-
-## 4. Confirmar
-
-Abre la URL pública y revisa que:
+Abre `https://awsug.scz.net/` y revisa que:
 - la landing muestre el próximo evento correcto o el estado vacío;
 - `/events/` liste los eventos nuevos o cerrados.
 
-Informa qué se publicó, en qué bucket y si invalidaste CloudFront.
+Informa qué commit se publicó y el link del run.

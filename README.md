@@ -94,21 +94,28 @@ El script crea un `.md` por evento (sin tocar los que ya existen), descarga el a
 
 Las exportaciones crudas (`assets/events/*.json`) no se suben a git porque traen los nombres de quienes se anotaron.
 
-## Publicar en S3
+## Publicar en S3 + CloudFront
 
-1. Crea un bucket y activa **Static website hosting** con documento índice `index.html` y documento de error `404.html`.
-2. Permite lectura pública (o sirve el bucket detrás de CloudFront).
-3. La URL pública es **https://awsug.scz.net**, configurada en `astro.config.mjs`. Si cambia, actualízala ahí (o usa la variable `SITE_URL`) para que los links al compartir sean correctos.
-4. Publica:
+La infraestructura está en `infra/` como app de AWS CDK en Python (stack `awsug-web`, región `us-east-1`): bucket S3 privado, CloudFront con OAC, una función que resuelve `/ruta/` → `/ruta/index.html`, el certificado ACM y los registros de `awsug.scz.net` en Route 53. El dominio y la zona están en `infra/cdk.json`.
+
+`infra/` es un respaldo de cómo está armada la infraestructura: no se despliega desde GitHub Actions. Si hay que recrearla o cambiarla, se hace a mano (requiere Python 3.10+):
 
 ```bash
-npm run build
-aws s3 sync dist/ s3://NOMBRE-DEL-BUCKET --delete
+cd infra
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+npx aws-cdk@2.1147.0 bootstrap   # solo la primera vez en la cuenta/región
+npx aws-cdk@2.1147.0 deploy awsug-web
 ```
 
-> **Dominio propio:** para servir `awsug.scz.net` directo desde S3 (solo HTTP), el bucket tiene que llamarse exactamente `awsug.scz.net` y el DNS necesita un CNAME a su endpoint de website. Para HTTPS hace falta CloudFront con un certificado de ACM emitido en `us-east-1`.
->
-> **Si usas CloudFront** con el bucket como origen REST (no el endpoint de "website"), las rutas como `/events/` no cargan `index.html` solas. Usa el endpoint de website del bucket como origen, o agrega una CloudFront Function que añada `index.html` a las rutas que terminan en `/`.
+### Publicación automática (GitHub Actions)
+
+`.github/workflows/publicar.yml` construye cada PR y publica en `awsug.scz.net`:
+
+- en cada push a `main`;
+- todos los días a las 06:00 (hora de Bolivia), para que los eventos que ya terminaron pasen a "pasados";
+- a mano, desde la pestaña **Actions** → *Publicar sitio* → *Run workflow*.
+
+Entra a AWS por OIDC con un rol que solo puede subir al bucket e invalidar CloudFront; no hay llaves guardadas en el repo.
 
 ## Diseño
 

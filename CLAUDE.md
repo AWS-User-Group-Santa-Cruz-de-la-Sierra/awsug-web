@@ -24,7 +24,7 @@ Las tareas de mantenimiento están escritas como skills en `.claude/skills/`. Ú
 
 **Líderes, merch, redes:** edita `src/data/lideres.json`, `src/data/merch.json` y `src/data/sitio.json`. Una URL vacía (`""`) oculta ese link en producción.
 
-**Publicar:** `npm run build && aws s3 sync dist/ s3://<bucket> --delete` (solo cuando el usuario lo pida).
+**Publicar:** lo hace GitHub Actions (`.github/workflows/publicar.yml`) con cada push a `main`, todos los días a las 06:00 de Bolivia, o con `gh workflow run publicar.yml --ref main` (solo cuando el usuario lo pida).
 
 ## Reglas
 
