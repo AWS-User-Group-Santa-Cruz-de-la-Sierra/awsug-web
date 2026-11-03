@@ -33,8 +33,8 @@ Es la comunidad AWS de Santa Cruz de la Sierra, Bolivia: local, cercana y alegre
 - Rutas: `/` (landing) y `/events` (eventos próximos y pasados). La landing muestra un adelanto del próximo evento que lleva a `/events`.
 - Secciones aprobadas de la landing, en orden: Hub (lema + CTA + redes), Quiénes somos y Qué hacemos, Agenda (adelanto del próximo evento), Hitos (eventos pasados), Liderazgo, Merch, pie con redes.
 - Cada evento: foto de portada, título, descripción, speakers, fecha, hora, link del lugar (mapa) y links generales (inscripción en Meetup, AWS Builder).
-- Liderazgo actual: Afu Tse, Rodolfo Justiniano, Isaac Jaldin; cada uno con nombre, título, LinkedIn, Instagram, perfil de AWS Skill Builder y TikTok.
-- Redes del grupo: Instagram, TikTok, X, LinkedIn.
+- Liderazgo actual: Afu Tse, Rodolfo Justiniano, Isaac Jaldin, Jose Jesus Cabrera y Luis Copa; cada uno con nombre, título, LinkedIn, Instagram, perfil de AWS Builder Center y TikTok (se muestran solo los que tienen link).
+- Redes del grupo: Instagram, TikTok, YouTube, LinkedIn, grupo de WhatsApp y Meetup (X todavía no existe).
 - Qué hacemos (confirmado): meetups con charlas, workshops hands-on, eventos grandes.
 - Idioma: español.
 

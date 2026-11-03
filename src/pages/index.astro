@@ -581,17 +581,24 @@ const actividades = [
   }
 
   /* ---------- LIDERAZGO ---------- */
+  /* los líderes se acomodan en filas centradas: una fila incompleta queda al medio, no colgando a la izquierda */
   .lideres {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 3.5rem 2rem;
   }
 
+  .lideres > :global(li) {
+    flex: 0 1 14rem;
+    min-width: 0;
+  }
+
   @media (min-width: 900px) {
-    .lideres > :global(li:nth-child(2)) {
+    .lideres > :global(li:nth-child(even)) {
       margin-top: 3rem;
     }
   }

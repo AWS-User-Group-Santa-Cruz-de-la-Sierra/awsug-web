@@ -81,7 +81,8 @@ const lideres = defineCollection({
     links: z.object({
       linkedin: urlOpcional,
       instagram: urlOpcional,
-      skillbuilder: urlOpcional,
+      /** Perfil en AWS Builder Center (builder.aws.com/community/@usuario). */
+      awsbuilder: urlOpcional,
       tiktok: urlOpcional,
     }),
   }),

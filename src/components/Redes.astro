@@ -7,9 +7,8 @@ interface Props {
 }
 
 const { variante = 'fila' } = Astro.props;
-const dev = import.meta.env.DEV;
-// Solo se muestran las redes con URL en src/data/sitio.json (en desarrollo se ven las que faltan, tachadas).
-const visibles = redes.filter((r) => r.url || dev);
+// solo las redes del grupo que tienen URL en src/data/sitio.json
+const visibles = redes.filter((r) => r.url);
 ---
 
 {
@@ -21,17 +20,10 @@ const visibles = redes.filter((r) => r.url || dev);
           data-sticker={variante === 'stickers' ? '' : undefined}
           style={variante === 'stickers' ? `--r:${[-6, 4, -3, 7][i % 4]}deg` : undefined}
         >
-          {r.url ? (
-            <a href={r.url} target="_blank" rel="noopener" class="red" aria-label={`${r.nombre} del grupo`}>
-              <Icon name={r.icono} />
-              <span>{r.nombre}</span>
-            </a>
-          ) : (
-            <span class="red red--pendiente" title="Falta el link en src/data/sitio.json">
-              <Icon name={r.icono} />
-              <span>{r.nombre}</span>
-            </span>
-          )}
+          <a href={r.url} target="_blank" rel="noopener" class="red" aria-label={`${r.nombre} del grupo`}>
+            <Icon name={r.icono} />
+            <span>{r.nombre}</span>
+          </a>
         </li>
       ))}
     </ul>
@@ -65,11 +57,6 @@ const visibles = redes.filter((r) => r.url || dev);
   .red :global(.icon) {
     width: 1.35rem;
     height: 1.35rem;
-  }
-
-  .red--pendiente {
-    opacity: 0.55;
-    text-decoration: line-through dashed;
   }
 
   .redes--stickers {

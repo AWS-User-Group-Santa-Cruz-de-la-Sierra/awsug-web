@@ -18,13 +18,13 @@ const iniciales = nombre
   .map((p) => p[0])
   .slice(0, 2)
   .join('');
-const dev = import.meta.env.DEV;
+// solo las redes que el líder tiene registradas en lideres.json
 const lista = [
   { nombre: 'LinkedIn', icono: 'linkedin-box-fill', url: links.linkedin },
   { nombre: 'Instagram', icono: 'instagram-line', url: links.instagram },
-  { nombre: 'AWS Skill Builder', icono: 'graduation-cap-line', url: links.skillbuilder },
+  { nombre: 'AWS Builder Center', icono: 'tools-line', url: links.awsbuilder },
   { nombre: 'TikTok', icono: 'tiktok-fill', url: links.tiktok },
-].filter((l) => l.url || dev);
+].filter((l) => l.url);
 ---
 
 <li class="lider">
@@ -54,15 +54,9 @@ const lista = [
       <ul class="lider-links">
         {lista.map((l) => (
           <li>
-            {l.url ? (
-              <a href={l.url} target="_blank" rel="noopener" aria-label={`${l.nombre} de ${nombre}`} title={l.nombre}>
-                <Icon name={l.icono} />
-              </a>
-            ) : (
-              <span class="pendiente" title={`Falta el link de ${l.nombre} en src/data/lideres.json`}>
-                <Icon name={l.icono} />
-              </span>
-            )}
+            <a href={l.url} target="_blank" rel="noopener" aria-label={`${l.nombre} de ${nombre}`} title={l.nombre}>
+              <Icon name={l.icono} />
+            </a>
           </li>
         ))}
       </ul>
@@ -80,7 +74,7 @@ const lista = [
   }
 
   .lider-st {
-    width: min(100%, 14.5rem);
+    width: min(100%, 13.5rem);
     margin-bottom: 1.1rem;
   }
 
@@ -124,8 +118,7 @@ const lista = [
     gap: 0.4rem;
   }
 
-  .lider-links a,
-  .lider-links .pendiente {
+  .lider-links a {
     display: grid;
     place-items: center;
     width: 2.9rem;
@@ -147,10 +140,5 @@ const lista = [
   .lider-links :global(.icon) {
     width: 1.3rem;
     height: 1.3rem;
-  }
-
-  .pendiente {
-    opacity: 0.4;
-    border-style: dashed !important;
   }
 </style>
