@@ -18,7 +18,7 @@ npm run build    # genera el sitio en dist/
 npm run preview  # sirve dist/ para revisarlo antes de publicar
 ```
 
-En `npm run dev` se muestran tachados los links de redes que todavía no se cargaron. En el build de producción simplemente no aparecen.
+Las redes (del grupo y de cada líder) solo aparecen si tienen un link cargado. Si cambias `src/content.config.ts`, reinicia `npm run dev` para que tome el esquema nuevo.
 
 ## Dónde está cada cosa
 
@@ -98,7 +98,7 @@ Las exportaciones crudas (`assets/events/*.json`) no se suben a git porque traen
 
 1. Crea un bucket y activa **Static website hosting** con documento índice `index.html` y documento de error `404.html`.
 2. Permite lectura pública (o sirve el bucket detrás de CloudFront).
-3. Pon la URL pública del sitio en `astro.config.mjs` (o en la variable `SITE_URL`) para que los links al compartir sean correctos.
+3. La URL pública es **https://awsug.scz.net**, configurada en `astro.config.mjs`. Si cambia, actualízala ahí (o usa la variable `SITE_URL`) para que los links al compartir sean correctos.
 4. Publica:
 
 ```bash
@@ -106,6 +106,8 @@ npm run build
 aws s3 sync dist/ s3://NOMBRE-DEL-BUCKET --delete
 ```
 
+> **Dominio propio:** para servir `awsug.scz.net` directo desde S3 (solo HTTP), el bucket tiene que llamarse exactamente `awsug.scz.net` y el DNS necesita un CNAME a su endpoint de website. Para HTTPS hace falta CloudFront con un certificado de ACM emitido en `us-east-1`.
+>
 > **Si usas CloudFront** con el bucket como origen REST (no el endpoint de "website"), las rutas como `/events/` no cargan `index.html` solas. Usa el endpoint de website del bucket como origen, o agrega una CloudFront Function que añada `index.html` a las rutas que terminan en `/`.
 
 ## Diseño

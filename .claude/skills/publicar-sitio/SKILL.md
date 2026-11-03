@@ -10,7 +10,7 @@ Publicar cambia lo que ve todo el público, así que **hazlo solo si el maintain
 ## 1. Datos que necesitas
 
 - **Nombre del bucket**: si no está en el pedido ni en `README.md`, pregúntalo. No lo adivines.
-- **URL pública**: `astro.config.mjs` toma `SITE_URL` o el valor por defecto. Si sigue el placeholder `awsugsantacruz.example.com`, avisa que los links al compartir saldrán mal y pide la URL real.
+- **URL pública**: es `https://awsug.scz.net`, el valor por defecto en `astro.config.mjs`. Si el maintainer publica en otra URL, construye con `SITE_URL=<url> npm run build`; si no, los links al compartir apuntarán al dominio equivocado.
 - **Credenciales de AWS**: corre `aws sts get-caller-identity`. Si falla, pide al maintainer que inicie sesión con `! aws sso login` o con su perfil, y no sigas.
 
 ## 2. Build
