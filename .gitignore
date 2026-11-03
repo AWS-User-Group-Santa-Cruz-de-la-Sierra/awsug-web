@@ -8,6 +8,7 @@ node_modules/
 # logs y sistema
 npm-debug.log*
 .DS_Store
+*.swp
 
 # entorno
 .env
@@ -23,3 +24,8 @@ npm-debug.log*
 
 # exportaciones crudas de Meetup: traen nombres y fotos de quienes se anotaron
 assets/events/*.json
+
+# infraestructura (CDK)
+infra/.venv/
+infra/cdk.out/
+__pycache__/

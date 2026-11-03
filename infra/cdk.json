@@ -1,0 +1,7 @@
+{
+  "app": ".venv/bin/python app.py",
+  "context": {
+    "dominio": "awsug.scz.net",
+    "hostedZoneId": "Z0277536VJO61KE7N2QS"
+  }
+}
