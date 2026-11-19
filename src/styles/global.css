@@ -436,6 +436,14 @@ html.motion [data-depth] {
   translate: 0 calc(var(--hero-scroll, 0) * var(--depth) * 1px);
 }
 
+/* con el hero apilado (celular) los stickers aparecen recién debajo del texto: para entonces la
+   profundidad ya los movió y los seguiría despegando del sticker del evento mientras se leen */
+@media (max-width: 900px) {
+  html.motion [data-depth] {
+    translate: none;
+  }
+}
+
 /* entrada con física de vinilo: cae con peso, se asienta con un rebote corto.
    Solo con JS y sin "reducir movimiento": sin JS todo está visible. */
 html.motion [data-sticker]:not(.is-stuck) {

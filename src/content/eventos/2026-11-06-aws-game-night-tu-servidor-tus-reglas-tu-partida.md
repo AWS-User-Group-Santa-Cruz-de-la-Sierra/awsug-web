@@ -12,7 +12,7 @@ lugar:
   nombre: "En línea"
 speakers: []
 links:
-  - etiqueta: "Inscribirme en Meetup"
+  - etiqueta: "Ver en Meetup"
     url: "https://www.meetup.com/user-group-santa-cruz/events/317247552/"
     tipo: meetup
 ---
