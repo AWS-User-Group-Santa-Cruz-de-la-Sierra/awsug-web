@@ -11,6 +11,7 @@ Cada evento es un archivo Markdown en `src/content/eventos/` y su afiche vive en
 
 - Si el maintainer **pegó** el JSON en el chat, guárdalo como `assets/events/AAAA-MM-DD-meetup-<algo>.json`, usando la fecha de hoy y un sufijo corto como `upcoming` o `-2`. Puedes quitar `rsvps`, `socialProofInsights` y las fotos de miembros: el importador no las usa.
 - Si ya está en `assets/events/`, úsalo tal cual.
+- Sirven dos exportaciones: la de la página de eventos del grupo (`data.groupByUrlname.events`) y la de "Tus eventos" (`data.self.upcomingEvents`). La segunda **no trae la descripción**: después de importar, cópiala de la página pública del evento en Meetup.
 - Estos JSON **no se suben a git** porque traen nombres y fotos de quienes se anotaron. El `.gitignore` ya los excluye; no lo cambies.
 
 ## 2. Importar

@@ -58,9 +58,11 @@ function leerJson(texto) {
 }
 
 const datos = leerJson(fs.readFileSync(archivo, 'utf8'));
-const conexion = datos?.data?.groupByUrlname?.events;
+// Dos exportaciones posibles: la página de eventos del grupo (groupByUrlname.events) o la de
+// "Tus eventos" (self.upcomingEvents), donde cada nodo es tu inscripción con el evento adentro.
+const conexion = datos?.data?.groupByUrlname?.events ?? datos?.data?.self?.upcomingEvents;
 if (!conexion?.edges) {
-  console.error('No encontré data.groupByUrlname.events.edges en el JSON. ¿Es la respuesta de la página de eventos de Meetup?');
+  console.error('No encontré data.groupByUrlname.events ni data.self.upcomingEvents en el JSON. ¿Es una respuesta de Meetup?');
   process.exit(1);
 }
 
@@ -132,7 +134,8 @@ fs.mkdirSync(DIR_EVENTOS, { recursive: true });
 fs.mkdirSync(DIR_FOTOS, { recursive: true });
 
 let creados = 0;
-for (const [i, { node: e }] of conexion.edges.entries()) {
+for (const [i, { node }] of conexion.edges.entries()) {
+  const e = node.event ?? node;
   const titulo = limpiarTitulo(e.title);
   const fecha = e.dateTime.slice(0, 10);
   const nombre = `${fecha}-${slug(titulo)}`;
@@ -143,7 +146,9 @@ for (const [i, { node: e }] of conexion.edges.entries()) {
     continue;
   }
 
-  const foto = (e.featuredEventPhoto ?? e.displayPhoto)?.highResUrl;
+  const fotoInfo = e.featuredEventPhoto ?? e.displayPhoto;
+  // "Tus eventos" solo trae la versión de 600 px; la de alta resolución está en la misma ruta con prefijo highres_
+  const foto = fotoInfo?.highResUrl ?? fotoInfo?.standardUrl?.replace(/\/600_(\d+\.\w+)$/, '/highres_$1');
   let portada;
   if (foto && !sinFotos) {
     const destino = path.join(DIR_FOTOS, `${nombre}.jpeg`);
@@ -159,10 +164,12 @@ for (const [i, { node: e }] of conexion.edges.entries()) {
   const lugarVirtual = !v || /online|virtual/i.test(v.name ?? '');
   const modalidad = lugarVirtual && e.eventType !== 'HYBRID' ? 'en-linea' : modalidadDe(e.eventType);
   const enLinea = modalidad === 'en-linea' || lugarVirtual;
-  const direccion = enLinea ? undefined : [v.address, v.city].filter(Boolean).join(', ');
+  // a veces Meetup ya trae la ciudad dentro de la dirección; no la repetimos
+  const ciudad = v?.city && !v.address?.includes(v.city) ? v.city : undefined;
+  const direccion = enLinea ? undefined : [v.address, ciudad].filter(Boolean).join(', ');
   const mapa = enLinea
     ? undefined
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([v.name, v.address, v.city].filter(Boolean).join(', '))}`;
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([v.name, v.address, ciudad].filter(Boolean).join(', '))}`;
 
   const lineas = [
     '---',
